@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AAFGest | Portal Interno</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <main class="main-content">
+        <section class="login-section">
+            <div class="login-box">
+                <header class="login-header">
+                    <img src="./img/logoAAF.jpg" alt="SilvaGest" class="main-logo">
+                    <h1>AAFGest</h1>
+                    <p>Gestão de Materiais de Construção</p>
+                </header>
+
+                <form id="login-form" class="form">
+                    <div class="input-field">
+                        <label>Email Corporativo</label>
+                        <div class="input-wrapper">
+                            <i class='bx bx-envelope'></i>
+                            <input type="email" placeholder="nome@empresa.com" required>
+                        </div>
+                    </div>
+
+                    <div class="input-field">
+                        <label>Palavra-passe</label>
+                        <div class="input-wrapper">
+                            <i class='bx bx-lock-alt'></i>
+                            <input type="password" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Aceder ao Painel</button>
+                </form>
+
+                <footer class="footer">
+                    <span>Acesso Restrito a Colaboradores</span>
+                    <p>&copy; 2026 Desenvolvido por André Silva</p>
+                </footer>
+            </div>
+        </section>
+
+        <section class="side-visual">
+            <div class="visual-content">
+                <h2>Eficiência na Construção.</h2>
+                <p>Conectando escritório, armazém e logística em tempo real.</p>
+            </div>
+        </section>
+    </main>
+<script type="module" src="auth.js"></script>
+</body>
+</html>

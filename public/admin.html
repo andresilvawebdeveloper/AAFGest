@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AAFGest | Administração</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-soft">
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="./img/logoAAF.jpg" alt="AAFGest" class="nav-logo">
+                <h3>AAFGest</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="active"><i class='bx bxs-dashboard'></i> Dashboard</a>
+                <a href="#"><i class='bx bxs-truck'></i> Entregas</a>
+                <a href="#"><i class='bx bxs-package'></i> Stock</a>
+                <a href="#"><i class='bx bxs-group'></i> Equipa</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="index.html"><i class='bx bx-log-out'></i> Sair</a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>Painel de Controlo</h1>
+                    <p>Bem-vindo, Administrador.</p>
+                </div>
+                <button class="btn-primary" onclick="alert('Funcionalidade: Criar nova ordem de entrega')">+ Nova Encomenda</button>
+            </header>
+
+            <section class="admin-stats">
+                <div class="stat-card">
+                    <i class='bx bx-time-five icon-blue'></i>
+                    <div>
+                        <span class="stat-label">Em Preparação</span>
+                        <span class="stat-value">12</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class='bx bx-map-pin icon-orange'></i>
+                    <div>
+                        <span class="stat-label">Em Rota</span>
+                        <span class="stat-value">04</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class='bx bx-check-double icon-green'></i>
+                    <div>
+                        <span class="stat-label">Concluídas Hoje</span>
+                        <span class="stat-value">28</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-table-container">
+                <div class="table-header">
+                    <h3>Monitorização de Entregas</h3>
+                    <span class="live-indicator"><span class="dot"></span> Live</span>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente / Obra</th>
+                            <th>Condutor</th>
+                            <th>Estado</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#1024</td>
+                            <td>Obra Arq. Miguel</td>
+                            <td>João Silva</td>
+                            <td><span class="badge badge-orange">Em Rota</span></td>
+                            <td><button class="btn-small">Detalhes</button></td>
+                        </tr>
+                        <tr>
+                            <td>#1023</td>
+                            <td>Construções Silva</td>
+                            <td>Ricardo Santos</td>
+                            <td><span class="badge badge-blue">Armazém</span></td>
+                            <td><button class="btn-small">Detalhes</button></td>
+                        </tr>
+                        <tr>
+                            <td>#1022</td>
+                            <td>Reabilitação Baixa</td>
+                            <td>João Silva</td>
+                            <td><span class="badge badge-green">Entregue</span></td>
+                            <td><button class="btn-small">Detalhes</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+</body>
+</html>

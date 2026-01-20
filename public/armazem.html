@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AAFGest | Armazém</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-soft">
+
+    <nav class="top-nav">
+        <img src="./img/logoAAF.jpg" alt="AAFGest" class="nav-logo">
+        <div class="user-info">
+            <span>Armazém <strong>#01</strong></span>
+            <i class='bx bx-package'></i>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <header class="dashboard-header">
+            <h2>Preparação de Carga</h2>
+            <p>Ordens de saída para hoje</p>
+        </header>
+
+        <div class="filter-chips">
+            <span class="chip active">Todas</span>
+            <span class="chip">Pendentes</span>
+            <span class="chip">Prontas</span>
+        </div>
+
+        <section class="picking-list">
+            <div class="picking-card">
+                <div class="card-header">
+                    <span class="truck-id">Camião A - João</span>
+                    <span class="status-badge">Pendente</span>
+                </div>
+                <div class="items-to-pick">
+                    <label class="check-item">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <span class="item-name">20x Sacos Cimento (25kg)</span>
+                    </label>
+                    <label class="check-item">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <span class="item-name">10x Vigas Aço (6m)</span>
+                    </label>
+                    <label class="check-item">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <span class="item-name">05x Paletes de Tijolo</span>
+                    </label>
+                </div>
+                <button class="btn-complete" onclick="confirmLoad(this)">Marcar como Carregado</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bottom-nav">
+        <a href="#" class="nav-item active"><i class='bx bx-list-check'></i><span>Picking</span></a>
+        <a href="#" class="nav-item"><i class='bx bx-repost'></i><span>Stock</span></a>
+        <a href="index.html" class="nav-item"><i class='bx bx-log-out'></i><span>Sair</span></a>
+    </footer>
+
+    <script>
+        function confirmLoad(btn) {
+            const card = btn.closest('.picking-card');
+            const checks = card.querySelectorAll('input[type="checkbox"]:checked');
+            const total = card.querySelectorAll('input[type="checkbox"]').length;
+
+            if (checks.length === total) {
+                card.classList.add('completed');
+                btn.innerText = "Carga Confirmada";
+                btn.disabled = true;
+                alert("Escritório notificado: Carga pronta para saída!");
+            } else {
+                alert("Por favor, verifique todos os itens antes de confirmar.");
+            }
+        }
+    </script>
+</body>
+</html>

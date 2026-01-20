@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AAFGest | Painel Condutor</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-soft">
+
+    <nav class="top-nav">
+        <img src="logo.png" alt="SilvaGest" class="nav-logo">
+        <div class="user-info">
+            <span>Olá, <strong>João</strong></span>
+            <i class='bx bx-user-circle'></i>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <header class="dashboard-header">
+            <h2>Minha Rota</h2>
+            <p>Terça-feira, 20 de Janeiro</p>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-value">3</span>
+                <span class="stat-label">Pendentes</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">5</span>
+                <span class="stat-label">Concluídas</span>
+            </div>
+        </section>
+
+        <section class="delivery-list">
+            <h3>Próximas Entregas</h3>
+            
+            <div class="delivery-card">
+                <div class="delivery-info">
+                    <span class="time">14:30</span>
+                    <h4>Obra Central - Arq. Miguel</h4>
+                    <p><i class='bx bx-map'></i> Rua das Flores, 123, Lisboa</p>
+                </div>
+                <div class="delivery-actions">
+                    <a href="https://www.google.com/maps" target="_blank" class="btn-icon map"><i class='bx bxs-navigation'></i></a>
+                    <button class="btn-icon check" onclick="markDone(this)"><i class='bx bx-check'></i></button>
+                </div>
+            </div>
+
+            <div class="delivery-card">
+                <div class="delivery-info">
+                    <span class="time">16:00</span>
+                    <h4>Construções Silva Lda</h4>
+                    <p><i class='bx bx-map'></i> Av. Principal, 45, Sintra</p>
+                </div>
+                <div class="delivery-actions">
+                    <a href="#" class="btn-icon map"><i class='bx bxs-navigation'></i></a>
+                    <button class="btn-icon check" onclick="markDone(this)"><i class='bx bx-check'></i></button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bottom-nav">
+        <a href="#" class="nav-item active"><i class='bx bxs-truck'></i><span>Rotas</span></a>
+        <a href="#" class="nav-item"><i class='bx bx-history'></i><span>Histórico</span></a>
+        <a href="index.html" class="nav-item"><i class='bx bx-log-out'></i><span>Sair</span></a>
+    </footer>
+
+    <script>
+        function markDone(btn) {
+            const card = btn.closest('.delivery-card');
+            card.style.opacity = '0.5';
+            card.style.transform = 'scale(0.95)';
+            btn.innerHTML = "<i class='bx bx-check-double'></i>";
+            btn.style.background = "#22c55e";
+            alert("Entrega confirmada no sistema!");
+        }
+    </script>
+</body>
+</html>
