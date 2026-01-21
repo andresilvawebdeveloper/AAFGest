@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="guard.js"></script>
+    <title>AAFGest | Gestão de Stock</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-soft">
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="./img/logoAAF.jpg" alt="AAFGest" class="nav-logo">
+                <h3>AAFGest</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin.html"><i class='bx bxs-dashboard'></i> Dashboard</a>
+                <a href="#"><i class='bx bxs-truck'></i> Entregas</a>
+                <a href="stock.html" class="active"><i class='bx bxs-package'></i> Stock</a>
+                <a href="#"><i class='bx bxs-group'></i> Equipa</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="javascript:void(0)" onclick="logout()"><i class='bx bx-log-out'></i> Sair</a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>Inventário de Materiais</h1>
+                    <p>Controlo de stock em tempo real.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-secondary" onclick="exportStockPDF()">
+    <i class='bx bx-export'></i> Exportar PDF
+</button>
+                    <button class="btn-primary" onclick="openModal()">+ Novo Produto</button>
+                </div>
+            </header>
+
+            <section class="stock-alerts">
+                <div class="alert-banner">
+                    <i class='bx bxs-error-circle'></i>
+                    <span><strong>Atenção:</strong> Existem 2 produtos com stock abaixo do nível de segurança.</span>
+                </div>
+            </section>
+
+            <section class="admin-table-container">
+                <div class="table-filters">
+                    <div class="search-box">
+                        <i class='bx bx-search'></i>
+                        <input type="text" placeholder="Procurar material...">
+                    </div>
+                </div>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Categoria</th>
+                            <th>Quantidade</th>
+                            <th>Unidade</th>
+                            <th>Estado</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Cimento Portland L-32</strong></td>
+                            <td>Ligantes</td>
+                            <td>450</td>
+                            <td>Sacos (25kg)</td>
+                            <td><span class="badge badge-green">OK</span></td>
+                            <td><button class="btn-edit"><i class='bx bx-edit-alt'></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Areia de Rio Lavada</strong></td>
+                            <td>Agregados</td>
+                            <td>12</td>
+                            <td>m³</td>
+                            <td><span class="badge badge-orange">Baixo</span></td>
+                            <td><button class="btn-edit"><i class='bx bx-edit-alt'></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tijolo de 11 (Furo)</strong></td>
+                            <td>Alvenaria</td>
+                            <td>1200</td>
+                            <td>Unidades</td>
+                            <td><span class="badge badge-green">OK</span></td>
+                            <td><button class="btn-edit"><i class='bx bx-edit-alt'></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vigas de Aço H</strong></td>
+                            <td>Metalurgia</td>
+                            <td>3</td>
+                            <td>Unidades</td>
+                            <td><span class="badge badge-red">Crítico</span></td>
+                            <td><button class="btn-edit"><i class='bx bx-edit-alt'></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+    <div id="productModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Adicionar Novo Material</h2>
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+        </div>
+        <form id="productForm">
+            <div class="input-group">
+                <label>Nome do Material</label>
+                <input type="text" id="pName" placeholder="Ex: Cimento Portland" required>
+            </div>
+            <div class="input-group">
+                <label>Categoria</label>
+                <select id="pCategory">
+                    <option value="Ligantes">Ligantes</option>
+                    <option value="Agregados">Agregados</option>
+                    <option value="Alvenaria">Alvenaria</option>
+                    <option value="Metalurgia">Metalurgia</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group">
+                    <label>Quantidade</label>
+                    <input type="number" id="pQty" placeholder="0" required>
+                </div>
+                <div class="input-group">
+                    <label>Unidade</label>
+                    <input type="text" id="pUnit" placeholder="Sacos, m³, etc.">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Gravar no Inventário</button>
+        </form>
+    </div>
+</div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script type="module" src="logout.js"></script>
+    <script type="module" src="stock.js"></script>
+</body>
+</html>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="guard.js"></script>
     <title>AAFGest | Armazém</title>
     <link rel="stylesheet" href="style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -61,7 +62,7 @@
     <footer class="bottom-nav">
         <a href="#" class="nav-item active"><i class='bx bx-list-check'></i><span>Picking</span></a>
         <a href="#" class="nav-item"><i class='bx bx-repost'></i><span>Stock</span></a>
-        <a href="index.html" class="nav-item"><i class='bx bx-log-out'></i><span>Sair</span></a>
+        <a href="javascript:void(0)" onclick="logout()"><i class='bx bx-log-out'></i> Sair</a>
     </footer>
 
     <script>
@@ -80,5 +81,6 @@
             }
         }
     </script>
+    <script type="module" src="logout.js"></script>
 </body>
 </html>
