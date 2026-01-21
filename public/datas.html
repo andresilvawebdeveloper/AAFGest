@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="guard.js"></script>
+    <title>AAFGest | Gestão de Prazos</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-soft">
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="./img/logoAAF.jpg" alt="AAFGest" class="nav-logo">
+                <h3>AAFGest</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin.html"><i class='bx bxs-dashboard'></i> Dashboard</a>
+                <a href="datas.html" class="active"><i class='bx bxs-calendar-event'></i> Prazos & Frota</a>
+                <a href="stock.html"><i class='bx bxs-package'></i> Stock</a>
+                <a href="equipa.html"><i class='bx bxs-group'></i> Equipa</a>
+                <a href="datas.html"><i class='bx bxs-group'></i>Gestão de Prazos</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="javascript:void(0)" onclick="logout()"><i class='bx bx-log-out'></i> Sair</a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>Calendário Operacional</h1>
+                    <p>Controlo de inspeções, impostos e manutenções.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-secondary" onclick="exportPrazosPDF()"><i class='bx bx-export'></i> Exportar PDF</button>
+                    <button class="btn-primary" onclick="openDateModal()">+ Novo Prazo</button>
+                </div>
+            </header>
+
+            <section class="admin-table-container">
+                <table class="admin-table" id="prazosTable">
+                    <thead>
+                        <tr>
+                            <th>Evento / Veículo</th>
+                            <th>Data Limite</th>
+                            <th>Tipo</th>
+                            <th>Lembrete</th>
+                            <th>Estado</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <div id="dateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Agendar Novo Prazo</h2>
+                <span class="close-modal" onclick="closeDateModal()">&times;</span>
+            </div>
+            <form id="dateForm">
+                <div class="input-group">
+                    <label>Descrição (Ex: Inspeção Camião 01-AA-01)</label>
+                    <input type="text" id="dDesc" required>
+                </div>
+                <div class="input-group">
+                    <label>Data Limite</label>
+                    <input type="date" id="dDate" required>
+                </div>
+                <div class="input-group">
+                    <label>Tipo</label>
+                    <select id="dType">
+                        <option value="Inspeção">Inspeção</option>
+                        <option value="Imposto (IUC)">Imposto (IUC)</option>
+                        <option value="Seguro">Seguro</option>
+                        <option value="Manutenção">Manutenção</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Configurar Lembrete</label>
+                    <select id="dReminder">
+                        <option value="30">1 Mês antes</option>
+                        <option value="7">1 Semana antes</option>
+                        <option value="1">24 Horas antes</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Guardar Prazo</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script type="module" src="datas.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="guard.js"></script>
+    <title>AAFGest | Gestão de Equipa</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-soft">
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="./img/logoAAF.jpg" alt="AAFGest" class="nav-logo">
+                <h3>AAFGest</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin.html"><i class='bx bxs-dashboard'></i> Dashboard</a>
+                <a href="#"><i class='bx bxs-truck'></i> Entregas</a>
+                <a href="stock.html"><i class='bx bxs-package'></i> Stock</a>
+                <a href="equipa.html" class="active"><i class='bx bxs-group'></i> Equipa</a>
+                <a href="datas.html"><i class='bx bxs-group'></i>Gestão de Prazos</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="javascript:void(0)" onclick="logout()"><i class='bx bx-log-out'></i> Sair</a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>A Nossa Equipa</h1>
+                    <p>Gestão de colaboradores e acessos.</p>
+                </div>
+                <button class="btn-primary" onclick="openUserModal()">+ Adicionar Membro</button>
+            </header>
+
+            <section class="team-grid" id="teamGrid">
+                </section>
+        </main>
+    </div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Novo Colaborador</h2>
+                <span class="close-modal" onclick="closeUserModal()">&times;</span>
+            </div>
+            <form id="userForm">
+                <div class="input-group">
+                    <label>Nome Completo</label>
+                    <input type="text" id="userName" placeholder="Ex: João Silva" required>
+                </div>
+                <div class="input-group">
+                    <label>Cargo / Função</label>
+                    <select id="userRole">
+                        <option value="Administrativo">Administrativo</option>
+                        <option value="Condutor">Condutor</option>
+                        <option value="Armazém">Armazém</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Email Corporativo</label>
+                    <input type="email" id="userEmail" placeholder="nome@empresa.com" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Registar Colaborador</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="logout.js"></script>
+    <script type="module" src="equipa.js"></script>
+</body>
+</html>
