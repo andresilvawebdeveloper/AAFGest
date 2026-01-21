@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="guard.js"></script>
+    <title>AAFGest | Gestão de Entregas</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-soft">
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="./img/logoAAF.jpg" alt="AAFGest" class="nav-logo">
+                <h3>AAFGest</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin.html"><i class='bx bxs-dashboard'></i> Dashboard</a>
+                <a href="entregas.html" class="active"><i class='bx bxs-truck'></i> Entregas</a>
+                <a href="stock.html"><i class='bx bxs-package'></i> Stock</a>
+                <a href="equipa.html"><i class='bx bxs-group'></i> Equipa</a>
+                <a href="datas.html"><i class='bx bxs-calendar-event'></i> Gestao de Frota</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="javascript:void(0)" onclick="logout()"><i class='bx bx-log-out'></i> Sair</a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>Registo de Entregas</h1>
+                    <p>Atribua materiais e rotas aos condutores.</p>
+                </div>
+                <button class="btn-primary" onclick="openEntregaModal()">+ Nova Entrega</button>
+            </header>
+
+            <div class="table-controls" style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0; gap: 15px;">
+                <div class="filter-group" style="display: flex; gap: 8px;">
+                    <button class="btn-filter active" onclick="filtrarEntregas('todas', this)">Todas</button>
+                    <button class="btn-filter" onclick="filtrarEntregas('hoje', this)">Hoje</button>
+                    <button class="btn-filter" onclick="filtrarEntregas('amanha', this)">Amanhã</button>
+                </div>
+                <div class="search-box">
+                    <i class='bx bx-search'></i>
+                    <input type="text" id="searchEntrega" placeholder="Procurar cliente ou condutor...">
+                </div>
+            </div>
+
+            <section class="admin-table-container">
+                <table class="admin-table" id="entregasTable">
+                    <thead>
+                        <tr>
+                            <th>Cliente / Data</th>
+                            <th>Condutor / Veículo</th>
+                            <th>Material</th>
+                            <th>Qtd</th>
+                            <th>Estado</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <div id="entregaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Agendar Entrega</h2>
+                <span class="close-modal" onclick="closeEntregaModal()">&times;</span>
+            </div>
+            <form id="entregaForm">
+                <div class="input-group">
+                    <label>Cliente / Local de Destino</label>
+                    <input type="text" id="entCliente" required placeholder="Ex: Obra Quinta do Conde">
+                </div>
+                <div class="input-group">
+                    <label>Data Agendada</label>
+                    <input type="date" id="entDataAgendada" required>
+                </div>
+                <div class="input-group">
+                    <label>Veículo (Frota)</label>
+                    <select id="entVeiculo" required>
+                        <option value="">A carregar frota...</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Condutor Atribuído</label>
+                    <select id="entCondutor" required>
+                        <option value="">A carregar condutores...</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex: 2;">
+                        <label>Material</label>
+                        <select id="entMaterial" required>
+                            <option value="">A carregar stock...</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>Quantidade</label>
+                        <input type="number" id="entQty" required placeholder="0">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Confirmar Agendamento</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="logout.js"></script>
+    <script type="module" src="entregas.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="guard.js"></script>
+    <title>AAFGest | Meu Perfil</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body class="bg-soft">
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="./img/logoAAF.jpg" alt="AAFGest" class="nav-logo">
+                <h3>AAFGest</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin.html"><i class='bx bxs-dashboard'></i> Dashboard</a>
+                <a href="perfil.html" class="active"><i class='bx bxs-user-circle'></i> Meu Perfil</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="javascript:void(0)" onclick="logout()"><i class='bx bx-log-out'></i> Sair</a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Definições de Perfil</h1>
+                <p>Gere as tuas informações pessoais e segurança.</p>
+            </header>
+
+            <div class="profile-container" style="max-width: 600px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                
+                <div class="profile-photo-section" style="text-align: center; margin-bottom: 30px;">
+                    <div id="photoDisplay" style="width: 120px; height: 120px; border-radius: 50%; background: #eee; margin: 0 auto 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 3px solid var(--primary-blue);">
+                        <i class='bx bx-user' style="font-size: 4rem; color: #ccc;"></i>
+                    </div>
+                    <input type="file" id="photoInput" style="display: none;" accept="image/*">
+                    <button class="btn-secondary" onclick="document.getElementById('photoInput').click()">Alterar Fotografia</button>
+                </div>
+
+                <form id="profileForm">
+                    <div class="input-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="profName" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Email (Login)</label>
+                        <input type="email" id="profEmail" required>
+                    </div>
+                    <hr style="margin: 25px 0; border: 0; border-top: 1px solid #eee;">
+                    <h3>Segurança</h3>
+                    <div class="input-group">
+                        <label>Nova Palavra-passe (Deixar vazio para não alterar)</label>
+                        <input type="password" id="profPass" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Guardar Alterações</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="logout.js"></script>
+    <script type="module" src="perfil.js"></script>
+</body>
+</html>
