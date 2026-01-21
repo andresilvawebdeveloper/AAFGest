@@ -18,11 +18,11 @@
                 <h3>AAFGest</h3>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="active"><i class='bx bxs-dashboard'></i> Dashboard</a>
+                <a href="admin.html" class="active"><i class='bx bxs-dashboard'></i> Dashboard</a>
                 <a href="entregas.html"><i class='bx bxs-truck'></i> Entregas</a>
                 <a href="stock.html"><i class='bx bxs-package'></i> Stock</a>
                 <a href="equipa.html"><i class='bx bxs-group'></i> Equipa</a>
-                <a href="datas.html"><i class='bx bxs-calendar-event'></i> Gestao de Frota</a>
+                <a href="datas.html"><i class='bx bxs-calendar-event'></i> Gestão de Frota</a>
                 <a href="perfil.html"><i class='bx bxs-user-circle'></i> Meu Perfil</a>
             </nav>
             <div class="sidebar-footer">
@@ -36,29 +36,29 @@
                     <h1>Painel de Controlo</h1>
                     <p>Bem-vindo, Administrador.</p>
                 </div>
-                <button class="btn-primary" onclick="alert('Funcionalidade: Criar nova ordem de entrega')">+ Nova Encomenda</button>
+                <button class="btn-primary" onclick="openEntregaModal()">+ Nova Encomenda</button>
             </header>
 
             <section class="admin-stats">
                 <div class="stat-card">
                     <i class='bx bx-time-five icon-blue'></i>
                     <div>
-                        <span class="stat-label">Em Preparação</span>
-                        <span class="stat-value">12</span>
+                        <span class="stat-label">Pendentes</span>
+                        <span class="stat-value" id="statsPendentes">0</span>
                     </div>
                 </div>
                 <div class="stat-card">
                     <i class='bx bx-map-pin icon-orange'></i>
                     <div>
                         <span class="stat-label">Em Rota</span>
-                        <span class="stat-value">04</span>
+                        <span class="stat-value" id="statsRota">0</span>
                     </div>
                 </div>
                 <div class="stat-card">
                     <i class='bx bx-check-double icon-green'></i>
                     <div>
                         <span class="stat-label">Concluídas Hoje</span>
-                        <span class="stat-value">28</span>
+                        <span class="stat-value" id="statsConcluidas">0</span>
                     </div>
                 </div>
             </section>
@@ -68,10 +68,10 @@
                     <h3>Monitorização de Entregas</h3>
                     <span class="live-indicator"><span class="dot"></span> Live</span>
                 </div>
-                <table class="admin-table">
+                <table class="admin-table" id="monitorTable">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>Data</th>
                             <th>Cliente / Obra</th>
                             <th>Condutor</th>
                             <th>Estado</th>
@@ -79,32 +79,55 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>#1024</td>
-                            <td>Obra Arq. Miguel</td>
-                            <td>João Silva</td>
-                            <td><span class="badge badge-orange">Em Rota</span></td>
-                            <td><button class="btn-small">Detalhes</button></td>
-                        </tr>
-                        <tr>
-                            <td>#1023</td>
-                            <td>Construções Silva</td>
-                            <td>Ricardo Santos</td>
-                            <td><span class="badge badge-blue">Armazém</span></td>
-                            <td><button class="btn-small">Detalhes</button></td>
-                        </tr>
-                        <tr>
-                            <td>#1022</td>
-                            <td>Reabilitação Baixa</td>
-                            <td>João Silva</td>
-                            <td><span class="badge badge-green">Entregue</span></td>
-                            <td><button class="btn-small">Detalhes</button></td>
-                        </tr>
-                    </tbody>
+                        </tbody>
                 </table>
             </section>
         </main>
     </div>
-<script type="module" src="logout.js"></script>
+
+    <div id="entregaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Criar Ordem de Entrega</h2>
+                <span class="close-modal" onclick="closeEntregaModal()">&times;</span>
+            </div>
+            <form id="entregaForm">
+                <div class="input-group">
+                    <label>Cliente / Obra</label>
+                    <input type="text" id="entCliente" required placeholder="Ex: Obra Quinta do Conde">
+                </div>
+                <div class="input-group">
+                    <label>Data de Entrega</label>
+                    <input type="date" id="entDataAgendada" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label>Condutor</label>
+                        <select id="entCondutor" required><option value="">Carregar...</option></select>
+                    </div>
+                    <div class="input-group">
+                        <label>Veículo</label>
+                        <select id="entVeiculo" required><option value="">Carregar...</option></select>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label>Material</label>
+                        <select id="entMaterial" required><option value="">Carregar...</option></select>
+                    </div>
+                    <div class="input-group">
+                        <label>Quantidade</label>
+                        <input type="number" id="entQty" required placeholder="0">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 15px;">Confirmar Encomenda</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="logout.js"></script>
+    <script type="module" src="admin.js"></script>
+    <script type="module" src="encomendas.js"></script>
+
 </body>
 </html>
