@@ -12,75 +12,57 @@
 <body class="bg-soft">
 
     <nav class="top-nav">
-        <img src="logo.png" alt="SilvaGest" class="nav-logo">
+        <img src="./img/logoAAF.jpg" alt="AAFGest" class="nav-logo">
         <div class="user-info">
-            <span>Olá, <strong>João</strong></span>
-            <i class='bx bx-user-circle'></i>
+            <span id="welcomeName">Olá, ...</span>
+            <a href="perfil.html" style="color: inherit; text-decoration: none;">
+                <i class='bx bx-user-circle' style="font-size: 1.5rem;"></i>
+            </a>
         </div>
     </nav>
 
-    <main class="dashboard-container">
-        <header class="dashboard-header">
-            <h2>Minha Rota</h2>
-            <p>Terça-feira, 20 de Janeiro</p>
+    <main class="dashboard-container" style="padding: 20px; max-width: 600px; margin: 0 auto;">
+        <header class="dashboard-header" style="margin-bottom: 25px;">
+            <h2 style="font-size: 1.8rem; font-weight: 800;">Minha Rota</h2>
+            <p id="currentDate" style="color: var(--text-light); text-transform: capitalize;"></p>
         </header>
 
-        <section class="stats-grid">
-            <div class="stat-card">
-                <span class="stat-value">3</span>
-                <span class="stat-label">Pendentes</span>
+        <section class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;">
+            <div class="stat-card" style="background: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                <span class="stat-value" id="countPendente" style="display: block; font-size: 2rem; font-weight: 800; color: var(--primary-blue);">0</span>
+                <span class="stat-label" style="font-size: 0.9rem; color: var(--text-light);">Pendentes</span>
             </div>
-            <div class="stat-card">
-                <span class="stat-value">5</span>
-                <span class="stat-label">Concluídas</span>
+            <div class="stat-card" style="background: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                <span class="stat-value" id="countConcluida" style="display: block; font-size: 2rem; font-weight: 800; color: #22c55e;">0</span>
+                <span class="stat-label" style="font-size: 0.9rem; color: var(--text-light);">Concluídas</span>
             </div>
         </section>
 
-        <section class="delivery-list">
-            <h3>Próximas Entregas</h3>
+        <section class="delivery-list" id="deliveryList">
+            <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Próximas Entregas</h3>
             
-            <div class="delivery-card">
-                <div class="delivery-info">
-                    <span class="time">14:30</span>
-                    <h4>Obra Central - Arq. Miguel</h4>
-                    <p><i class='bx bx-map'></i> Rua das Flores, 123, Lisboa</p>
-                </div>
-                <div class="delivery-actions">
-                    <a href="https://www.google.com/maps" target="_blank" class="btn-icon map"><i class='bx bxs-navigation'></i></a>
-                    <button class="btn-icon check" onclick="markDone(this)"><i class='bx bx-check'></i></button>
-                </div>
-            </div>
-
-            <div class="delivery-card">
-                <div class="delivery-info">
-                    <span class="time">16:00</span>
-                    <h4>Construções Silva Lda</h4>
-                    <p><i class='bx bx-map'></i> Av. Principal, 45, Sintra</p>
-                </div>
-                <div class="delivery-actions">
-                    <a href="#" class="btn-icon map"><i class='bx bxs-navigation'></i></a>
-                    <button class="btn-icon check" onclick="markDone(this)"><i class='bx bx-check'></i></button>
-                </div>
+            <div id="loadingMessage" style="text-align: center; padding: 20px; color: var(--text-light);">
+                <i class='bx bx-loader-alt bx-spin'></i> A carregar rota...
             </div>
         </section>
     </main>
 
-    <footer class="bottom-nav">
-        <a href="#" class="nav-item active"><i class='bx bxs-truck'></i><span>Rotas</span></a>
-        <a href="#" class="nav-item"><i class='bx bx-history'></i><span>Histórico</span></a>
-        <a href="javascript:void(0)" onclick="logout()"><i class='bx bx-log-out'></i> Sair</a>
+    <footer class="bottom-nav" style="position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); border-radius: 20px 20px 0 0;">
+        <a href="condutor.html" class="nav-item active" style="text-decoration: none; color: var(--primary-blue); display: flex; flex-direction: column; align-items: center;">
+            <i class='bx bxs-truck' style="font-size: 1.5rem;"></i>
+            <span style="font-size: 0.7rem; font-weight: 600;">Rotas</span>
+        </a>
+        <a href="perfil.html" class="nav-item" style="text-decoration: none; color: #94a3b8; display: flex; flex-direction: column; align-items: center;">
+            <i class='bx bx-user' style="font-size: 1.5rem;"></i>
+            <span style="font-size: 0.7rem; font-weight: 600;">Perfil</span>
+        </a>
+        <a href="javascript:void(0)" onclick="logout()" class="nav-item" style="text-decoration: none; color: #94a3b8; display: flex; flex-direction: column; align-items: center;">
+            <i class='bx bx-log-out' style="font-size: 1.5rem;"></i>
+            <span style="font-size: 0.7rem; font-weight: 600;">Sair</span>
+        </a>
     </footer>
 
-    <script>
-        function markDone(btn) {
-            const card = btn.closest('.delivery-card');
-            card.style.opacity = '0.5';
-            card.style.transform = 'scale(0.95)';
-            btn.innerHTML = "<i class='bx bx-check-double'></i>";
-            btn.style.background = "#22c55e";
-            alert("Entrega confirmada no sistema!");
-        }
-    </script>
     <script type="module" src="logout.js"></script>
+    <script type="module" src="condutor.js"></script>
 </body>
 </html>

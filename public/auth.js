@@ -43,7 +43,7 @@ if (loginForm) {
             } else if (user.email.includes('condutor')) {
                 window.location.href = "condutor.html";
             } else {
-                window.location.href = "admin.html";
+                window.location.href = "condutor.html";
             }
 
         } catch (error) {
