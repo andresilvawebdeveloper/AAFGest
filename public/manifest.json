@@ -1,13 +1,9 @@
 {
   "name": "AAFGest - Sistema de Gestão Empresarial",
   "short_name": "AAFGest",
-  "description": "Gestão completa de Entregas, Stock, Frota e Equipa para a AAF",
-  "start_url": "/admin.html",
   "id": "/admin.html",
+  "start_url": "/admin.html",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#f8fafc",
-  "theme_color": "#2563eb",
   "icons": [
     {
       "src": "img/logoAAFapp.jpg",
@@ -27,15 +23,13 @@
       "src": "img/screenshot_login_mobile.png",
       "sizes": "1080x1920",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Login Mobile"
+      "form_factor": "narrow"
     },
     {
       "src": "img/screenshot_login.png",
       "sizes": "1920x1080",
       "type": "image/png",
-      "form_factor": "wide",
-      "label": "Login Desktop"
+      "form_factor": "wide"
     }
   ]
 }
