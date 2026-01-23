@@ -701,3 +701,108 @@ body {
 }
 
 @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.7); } 100% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); } }
+/* --- RESPONSIVIDADE GLOBAL PARA ADMIN & TABELAS --- */
+
+@media (max-width: 992px) {
+    /* 1. Ajuste do Layout Admin */
+    .admin-layout {
+        flex-direction: column;
+    }
+
+    /* 2. Sidebar vira Menu de Topo ou Escondido */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-header {
+        margin-bottom: 0;
+    }
+
+    .sidebar-header h3 { display: none; } /* Esconde texto do logo para poupar espaço */
+
+    /* Esconde o menu original e você pode disparar um modal ou dropdown */
+    .sidebar-nav {
+        display: none; /* Aqui você pode usar uma classe .active para mostrar via JS */
+    }
+
+    /* 3. Ajuste das Estatísticas (Grid de 3 vira 1 ou 2) */
+    .admin-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .admin-main {
+        padding: 1.5rem;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .admin-header button {
+        width: 100%; /* Botão "Nova Encomenda" ocupa a largura toda no telemóvel */
+    }
+
+    /* 4. TRANSFORMANDO TABELAS EM CARDS (O segredo da responsividade) */
+    .admin-table thead {
+        display: none; /* Esconde o cabeçalho da tabela */
+    }
+
+    .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .admin-table tr {
+        background: white;
+        margin-bottom: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px;
+    }
+
+    .admin-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border-bottom: 1px solid var(--bg-soft);
+    }
+
+    .admin-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* Adiciona o nome da coluna antes do valor */
+    .admin-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 12px;
+        width: 45%;
+        text-align: left;
+        font-weight: 700;
+        color: var(--text-light);
+    }
+}
+
+/* Ajustes para ecrãs muito pequenos (Telemóveis) */
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 20% auto;
+        padding: 20px;
+    }
+}
