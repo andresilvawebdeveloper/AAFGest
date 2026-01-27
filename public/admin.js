@@ -57,15 +57,16 @@ document.getElementById('entregaForm')?.addEventListener('submit', async (e) => 
     e.preventDefault();
     
     const novaEntrega = {
-        cliente: document.getElementById('entCliente').value,
-        dataAgendada: document.getElementById('entDataAgendada').value,
-        condutorId: document.getElementById('entCondutor').value,
-        veiculo: document.getElementById('entVeiculo').value,
-        material: document.getElementById('entMaterial').value,
-        quantidade: Number(document.getElementById('entQty').value),
-        estado: "Pendente",
-        timestamp: serverTimestamp()
-    };
+    cliente: document.getElementById('entCliente').value,
+    localizacao: document.getElementById('entLocalizacao').value, // Novo campo
+    dataAgendada: document.getElementById('entDataAgendada').value,
+    condutor: document.getElementById('entCondutor').value,
+    veiculo: document.getElementById('entVeiculo').value,
+    material: document.getElementById('entMaterial').value,
+    quantidade: Number(document.getElementById('entQty').value),
+    estado: "Pendente",
+    timestamp: serverTimestamp()
+};
 
     try {
         await addDoc(collection(db, "entregas"), novaEntrega);
