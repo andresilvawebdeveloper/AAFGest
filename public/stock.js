@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // 1. Configuração do Firebase
 const firebaseConfig = {
@@ -11,7 +11,6 @@ const firebaseConfig = {
     appId: "1:406052783734:web:f0f25e7661d9d614124157"
 };
 
-// 2. Inicialização
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const stockCollection = collection(db, "stock");
@@ -23,7 +22,7 @@ window.openModal = function(id = null, name = '', cat = '', qty = '', unit = '')
     const modal = document.getElementById('productModal');
     const title = modal.querySelector('h2');
     
-    if (id) {
+    if (id && id !== 'null') { // Garantir que o ID é válido
         editId = id;
         title.innerText = "Editar Material";
         document.getElementById('pName').value = name;
@@ -43,7 +42,7 @@ window.closeModal = function() {
     editId = null;
 }
 
-// --- 4. GRAVAR DADOS (ADICIONAR OU ATUALIZAR) ---
+// --- 4. GRAVAR DADOS ---
 const productForm = document.getElementById('productForm');
 if (productForm) {
     productForm.addEventListener('submit', async (e) => {
@@ -71,12 +70,15 @@ if (productForm) {
     });
 }
 
-// --- 5. RENDERIZAR TABELA E ALERTAS EM TEMPO REAL ---
-onSnapshot(stockCollection, (snapshot) => {
-    const tableBody = document.querySelector('.admin-table tbody');
-    const alertSection = document.querySelector('.stock-alerts');
-    
-    tableBody.innerHTML = ''; 
+// --- 5. RENDERIZAR TABELA (CORRIGIDO) ---
+// Adicionamos um orderBy para a lista estar sempre organizada por nome
+const q = query(stockCollection, orderBy("name", "asc"));
+
+onSnapshot(q, (snapshot) => {
+    const tableBody = document.getElementById('stockTableBody'); // Usar o ID que pusemos no HTML
+    if (!tableBody) return;
+
+    let content = ''; 
     let lowStockCount = 0; 
 
     snapshot.forEach((docSnap) => {
@@ -96,37 +98,42 @@ onSnapshot(stockCollection, (snapshot) => {
             statusText = 'Baixo';
         }
 
-        const row = `
+        // Construir a string de uma vez só é mais rápido
+        content += `
             <tr>
-                <td><strong>${item.name}</strong></td>
-                <td>${item.category}</td>
-                <td>${item.quantity}</td>
-                <td>${item.unit}</td>
-                <td><span class="badge ${badgeClass}">${statusText}</span></td>
+                <td data-label="Material"><strong>${item.name}</strong></td>
+                <td data-label="Categoria">${item.category}</td>
+                <td data-label="Quantidade">${item.quantity}</td>
+                <td data-label="Unidade">${item.unit}</td>
+                <td data-label="Estado"><span class="badge ${badgeClass}">${statusText}</span></td>
                 <td>
                     <button class="btn-edit" onclick="openModal('${id}', '${item.name}', '${item.category}', '${item.quantity}', '${item.unit}')">
                         <i class='bx bx-edit-alt'></i>
                     </button>
-                    <button class="btn-delete" onclick="deleteProduct('${id}')">
+                    <button class="btn-delete" onclick="deleteProduct('${id}')" style="color: #ef4444; border:none; background:none; cursor:pointer; margin-left:10px;">
                         <i class='bx bx-trash'></i>
                     </button>
                 </td>
             </tr>
         `;
-        tableBody.innerHTML += row;
     });
 
-    // Atualizar Banner de Alerta
-    if (lowStockCount > 0) {
-        alertSection.style.display = 'block';
-        alertSection.innerHTML = `
-            <div class="alert-banner">
-                <i class='bx bxs-error-circle'></i>
-                <span><strong>Atenção:</strong> Existem ${lowStockCount} produtos com stock abaixo do nível de segurança.</span>
-            </div>
-        `;
-    } else {
-        alertSection.style.display = 'none';
+    tableBody.innerHTML = content;
+
+    // Atualizar Banner de Alerta (Se existir a div .stock-alerts no HTML)
+    const alertSection = document.querySelector('.stock-alerts');
+    if (alertSection) {
+        if (lowStockCount > 0) {
+            alertSection.style.display = 'block';
+            alertSection.innerHTML = `
+                <div class="alert-banner">
+                    <i class='bx bxs-error-circle'></i>
+                    <span><strong>Atenção:</strong> Existem ${lowStockCount} produtos com stock baixo.</span>
+                </div>
+            `;
+        } else {
+            alertSection.style.display = 'none';
+        }
     }
 });
 
@@ -141,30 +148,11 @@ window.deleteProduct = async function(id) {
     }
 };
 
-// --- 7. PESQUISA EM TEMPO REAL ---
-const searchInput = document.querySelector('.search-box input');
-if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const rows = document.querySelectorAll('.admin-table tbody tr');
-
-        rows.forEach(row => {
-            const materialName = row.querySelector('td:first-child').innerText.toLowerCase();
-            const categoryName = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
-
-            if (materialName.includes(term) || categoryName.includes(term)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    });
-}// --- 9. EXPORTAR PARA PDF ---
+// --- 9. EXPORTAR PARA PDF ---
 window.exportStockPDF = function() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // Título do Documento
     doc.setFontSize(18);
     doc.text("AAFGest - Inventário de Materiais", 14, 20);
     
@@ -173,28 +161,14 @@ window.exportStockPDF = function() {
     const dataAtual = new Date().toLocaleDateString('pt-PT');
     doc.text(`Relatório gerado em: ${dataAtual}`, 14, 28);
 
-    // Gerar a tabela a partir do HTML
-    // Ignoramos a última coluna (Ações) para o PDF ficar limpo
     doc.autoTable({
         html: '.admin-table',
         startY: 35,
-        columns: [
-            { header: 'Material', dataKey: 'material' },
-            { header: 'Categoria', dataKey: 'categoria' },
-            { header: 'Qtd', dataKey: 'quantidade' },
-            { header: 'Unidade', dataKey: 'unidade' },
-            { header: 'Estado', dataKey: 'estado' }
-        ],
-        didParseCell: function(data) {
-            // Remove a coluna de ícones/botões (a última)
-            if (data.column.index === 5) {
-                data.cell.text = '';
-            }
-        },
-        headStyles: { fillColor: [37, 99, 235] }, // Azul AAFGest
+        // Ignorar a coluna de Ações (índice 5)
+        columns: [0, 1, 2, 3, 4], 
+        headStyles: { fillColor: [37, 99, 235] },
         theme: 'striped'
     });
 
-    // Abrir o PDF ou Fazer Download
     doc.save(`Inventario_AAFGest_${dataAtual}.pdf`);
 };

@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="AAFGest">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AAFGest">
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('AAFGest Online: ', reg.scope))
-        .catch(err => console.log('Erro ao registar App: ', err));
-    });
-  }
-</script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('AAFGest Online: ', reg.scope))
+            .catch(err => console.log('Erro ao registar App: ', err));
+        });
+      }
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="module" src="guard.js"></script>
@@ -36,7 +37,7 @@
                 <a href="entregas.html"><i class='bx bxs-truck'></i> Entregas</a>
                 <a href="stock.html" class="active"><i class='bx bxs-package'></i> Stock</a>
                 <a href="equipa.html"><i class='bx bxs-group'></i> Equipa</a>
-                <a href="datas.html"><i class='bx bxs-calendar-event'></i> Gestâo de Frota</a>
+                <a href="datas.html"><i class='bx bxs-calendar-event'></i> Gestão de Frota</a>
                 <a href="perfil.html"><i class='bx bxs-user-circle'></i> Meu Perfil</a>
             </nav>
             <div class="sidebar-footer">
@@ -52,8 +53,8 @@
                 </div>
                 <div class="header-actions">
                     <button class="btn-secondary" onclick="exportStockPDF()">
-    <i class='bx bx-export'></i> Exportar PDF
-</button>
+                        <i class='bx bx-export'></i> Exportar PDF
+                    </button>
                     <button class="btn-primary" onclick="openModal()">+ Novo Produto</button>
                 </div>
             </header>
@@ -62,7 +63,7 @@
                 <div class="table-filters">
                     <div class="search-box">
                         <i class='bx bx-search'></i>
-                        <input type="text" placeholder="Procurar material...">
+                        <input type="text" id="stockSearch" placeholder="Procurar material..." onkeyup="filterStock()">
                     </div>
                 </div>
 
@@ -77,48 +78,58 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
+                    <tbody id="stockTableBody">
+                        </tbody>
                 </table>
             </section>
         </main>
     </div>
+
     <div id="productModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Adicionar Novo Material</h2>
-            <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar Novo Material</h2>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="productForm">
+                <div class="input-group">
+                    <label>Nome do Material</label>
+                    <input type="text" id="pName" placeholder="Ex: Areia Fina" required>
+                </div>
+                <div class="input-group">
+                    <label>Categoria</label>
+                    <select id="pCategory">
+                        <option value="Agregados">Agregados</option>
+                        <option value="Ligantes">Ligantes</option>
+                        <option value="Alvenaria">Alvenaria</option>
+                        <option value="Metalurgia">Metalurgia</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="input-group" style="flex: 2;">
+                        <label>Quantidade Inicial</label>
+                        <input type="number" id="pQty" step="0.01" placeholder="0.00" required>
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>Unidade</label>
+                        <select id="pUnit">
+                            <option value="m³">m³</option>
+                            <option value="Sacos">Sacos</option>
+                            <option value="Kg">Kg</option>
+                            <option value="Un">Un</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Gravar no Inventário</button>
+            </form>
         </div>
-        <form id="productForm">
-            <div class="input-group">
-                <label>Nome do Material</label>
-                <input type="text" id="pName" placeholder="Ex: Cimento Portland" required>
-            </div>
-            <div class="input-group">
-                <label>Categoria</label>
-                <select id="pCategory">
-                    <option value="Ligantes">Ligantes</option>
-                    <option value="Agregados">Agregados</option>
-                    <option value="Alvenaria">Alvenaria</option>
-                    <option value="Metalurgia">Metalurgia</option>
-                </select>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <div class="input-group">
-                    <label>Quantidade</label>
-                    <input type="number" id="pQty" placeholder="0" required>
-                </div>
-                <div class="input-group">
-                    <label>Unidade</label>
-                    <input type="text" id="pUnit" placeholder="Sacos, m³, etc.">
-                </div>
-            </div>
-            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Gravar no Inventário</button>
-        </form>
     </div>
-</div>
-    
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script type="module" src="logout.js"></script>
     <script type="module" src="stock.js"></script>
+
 </body>
 </html>

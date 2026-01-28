@@ -22,11 +22,24 @@ onAuthStateChanged(auth, async (user) => {
         const qUser = query(collection(db, "team"), where("email", "==", user.email));
         const userSnap = await getDocs(qUser);
         let nomeCompleto = "";
+        let docId = "";
         
         userSnap.forEach(d => {
             nomeCompleto = d.data().name;
+            docId = d.id;
             document.getElementById('welcomeName').innerHTML = `Olá, <strong>${nomeCompleto.split(' ')[0]}</strong>`;
         });
+
+        // --- SISTEMA DE PRESENÇA (ONLINE) ---
+        if (docId) {
+            const userRef = doc(db, "team", docId);
+            await updateDoc(userRef, { status: "online" });
+
+            // Define como offline quando fecha a aba ou sai da app
+            window.addEventListener('beforeunload', () => {
+                updateDoc(userRef, { status: "offline" });
+            });
+        }
 
         const qEntregas = query(collection(db, "entregas"), where("condutor", "==", nomeCompleto));
 
@@ -48,8 +61,6 @@ onAuthStateChanged(auth, async (user) => {
                 if (en.estado === "Concluída") concluidas++; else pendentes++;
 
                 const dataExibicao = en.dataAgendada.split('-').reverse().join('/');
-
-                // Definir cores dinâmicas para o estado "Em Rota" (Laranja)
                 const corEstado = en.estado === 'Pendente' ? '#3b82f6' : (en.estado === 'Em Rota' ? '#f97316' : '#22c55e');
 
                 const card = document.createElement('div');
@@ -57,29 +68,30 @@ onAuthStateChanged(auth, async (user) => {
                 card.style = `background: white; padding: 20px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border-left: 5px solid ${corEstado}; opacity: ${en.estado === 'Concluída' ? '0.7' : '1'}`;
                 
                 card.innerHTML = `
-    <div class="delivery-info">
-        <span style="font-size: 0.75rem; font-weight: 800; color: ${corEstado};">${dataExibicao} ${en.estado === 'Em Rota' ? '• EM ROTA' : ''}</span>
-        <h4 style="margin: 5px 0; font-size: 1.1rem;">${en.cliente}</h4>
-        <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 4px;"><i class='bx bx-package'></i> ${en.material} (${en.quantidade})</p>
-        <p style="font-size: 0.85rem; color: var(--text-light);"><i class='bx bx-car'></i> ${en.veiculo}</p>
-    </div>
-    <div class="delivery-actions" style="display: flex; gap: 10px;">
-        <a href="${en.localizacao}" target="_blank" class="btn-icon" style="background: #f1f5f9; color: #64748b; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
-            <i class='bx bxs-navigation' style="font-size: 1.2rem;"></i>
-        </a>
-        ${renderBotaoAcao(id, en)}
-    </div>
-`;
+                    <div class="delivery-info">
+                        <span style="font-size: 0.75rem; font-weight: 800; color: ${corEstado};">${dataExibicao} ${en.estado === 'Em Rota' ? '• EM ROTA' : ''}</span>
+                        <h4 style="margin: 5px 0; font-size: 1.1rem;">${en.cliente}</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 4px;"><i class='bx bx-package'></i> ${en.material} (${en.quantidade})</p>
+                        <p style="font-size: 0.85rem; color: var(--text-light);"><i class='bx bx-car'></i> ${en.veiculo}</p>
+                    </div>
+                    <div class="delivery-actions" style="display: flex; gap: 10px;">
+                        <a href="${en.localizacao}" target="_blank" class="btn-icon" style="background: #f1f5f9; color: #64748b; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                            <i class='bx bxs-navigation' style="font-size: 1.2rem;"></i>
+                        </a>
+                        ${renderBotaoAcao(id, en)}
+                    </div>
+                `;
                 list.appendChild(card);
             });
 
             document.getElementById('countPendente').innerText = pendentes;
             document.getElementById('countConcluida').innerText = concluidas;
         });
+    } else {
+        window.location.href = "index.html"; // Redireciona se não estiver logado
     }
 });
 
-// Função para decidir qual botão mostrar baseado no estado
 function renderBotaoAcao(id, en) {
     if (en.estado === 'Pendente') {
         return `<button class="btn-icon" onclick="iniciarRota('${id}')" style="background: #f97316; color: white; width: 45px; height: 45px; border-radius: 12px; border: none; cursor: pointer;">
@@ -94,7 +106,6 @@ function renderBotaoAcao(id, en) {
     }
 }
 
-// 1. FUNÇÃO PARA INICIAR ROTA
 window.iniciarRota = async (id) => {
     try {
         await updateDoc(doc(db, "entregas", id), { 
@@ -106,7 +117,6 @@ window.iniciarRota = async (id) => {
     }
 };
 
-// 2. FUNÇÃO PARA CONCLUIR ENTREGA E ABATER STOCK
 window.finalizarServico = async (id, materialNome, qtd) => {
     if (confirm("Confirmas que este material foi entregue? O stock será atualizado automaticamente.")) {
         try {
