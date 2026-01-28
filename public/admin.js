@@ -13,7 +13,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --- 1. GESTÃO DE MÚLTIPLOS ITENS NO FORMULÁRIO ---
+// --- 1. GESTÃO DE MÚLTIPLOS ITENS ---
 window.adicionarLinhaItem = () => {
     const container = document.getElementById('itensContainer');
     const template = container.firstElementChild.cloneNode(true);
@@ -37,15 +37,10 @@ window.openEntregaModal = async () => {
 window.closeEntregaModal = () => document.getElementById('entregaModal').style.display = 'none';
 
 async function carregarMateriais() {
-    try {
-        const stockSnap = await getDocs(collection(db, "stock"));
-        const options = ['<option value="">Selecionar Material...</option>'];
-        stockSnap.forEach(doc => options.push(`<option value="${doc.data().name}">${doc.data().name}</option>`));
-        
-        document.querySelectorAll('.item-material').forEach(select => {
-            select.innerHTML = options.join('');
-        });
-    } catch (err) { console.error("Erro ao carregar stock:", err); }
+    const stockSnap = await getDocs(collection(db, "stock"));
+    const options = ['<option value="">Selecionar Material...</option>'];
+    stockSnap.forEach(doc => options.push(`<option value="${doc.data().name}">${doc.data().name}</option>`));
+    document.querySelectorAll('.item-material').forEach(select => select.innerHTML = options.join(''));
 }
 
 // --- 3. MODAL DE ATRIBUIÇÃO (LOGÍSTICA) ---
@@ -59,29 +54,32 @@ window.closeAssignModal = () => document.getElementById('assignModal').style.dis
 
 async function carregarDadosLogistica() {
     try {
-        // Carregar Condutores
-        const teamSnap = await getDocs(query(collection(db, "team"), where("role", "==", "condutor")));
+        // 1. Condutores - Usando "Condutor" com C maiúsculo conforme o seu entregas.js
+        const qTeam = query(collection(db, "team"), where("role", "==", "Condutor"));
+        const teamSnap = await getDocs(qTeam);
         const selectCondutor = document.getElementById('assignCondutor');
-        selectCondutor.innerHTML = '<option value="">Selecionar Condutor...</option>';
-        teamSnap.forEach(d => {
-            selectCondutor.innerHTML += `<option value="${d.data().name}">${d.data().name}</option>`;
-        });
+        
+        let htmlCond = '<option value="">Selecionar Condutor...</option>';
+        teamSnap.forEach(d => htmlCond += `<option value="${d.data().name}">${d.data().name}</option>`);
+        selectCondutor.innerHTML = htmlCond;
 
-        // Carregar Veículos
-        const frotaSnap = await getDocs(collection(db, "frota"));
+        // 2. Veículos - Usando a coleção "prazos" e o campo "desc" conforme o seu entregas.js
+        const frotaSnap = await getDocs(collection(db, "prazos"));
         const selectVeiculo = document.getElementById('assignVeiculo');
-        selectVeiculo.innerHTML = '<option value="">Selecionar Veículo...</option>';
+        
+        let htmlVei = '<option value="">Selecionar Veículo...</option>';
         frotaSnap.forEach(d => {
-            const v = d.data();
-            selectVeiculo.innerHTML += `<option value="${v.matricula}">${v.veiculo} - ${v.matricula}</option>`;
+            const v = d.data().desc;
+            if(v) htmlVei += `<option value="${v}">${v}</option>`;
         });
-    } catch (err) { console.error("Erro ao carregar logística:", err); }
+        selectVeiculo.innerHTML = htmlVei;
+
+    } catch (err) { console.error("Erro na logística:", err); }
 }
 
-// --- 4. GRAVAR ENCOMENDA (ESTADO: PLANEAMENTO) ---
+// --- 4. GRAVAR ENCOMENDA ---
 document.getElementById('entregaForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
     const itens = [];
     document.querySelectorAll('.item-row').forEach(row => {
         itens.push({
@@ -101,17 +99,16 @@ document.getElementById('entregaForm')?.addEventListener('submit', async (e) => 
 
     try {
         await addDoc(collection(db, "entregas"), novaEncomenda);
-        alert("Encomenda planeada com sucesso!");
+        alert("Encomenda planeada!");
         closeEntregaModal();
         e.target.reset();
-    } catch (error) { console.error("Erro ao criar:", error); }
+    } catch (err) { console.error(err); }
 });
 
-// --- 5. SUBMETER ATRIBUIÇÃO (MOVER PARA ENTREGA) ---
+// --- 5. SUBMETER ATRIBUIÇÃO ---
 document.getElementById('assignForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const id = document.getElementById('assignId').value;
-    
     try {
         await updateDoc(doc(db, "entregas", id), {
             condutor: document.getElementById('assignCondutor').value,
@@ -119,29 +116,26 @@ document.getElementById('assignForm')?.addEventListener('submit', async (e) => {
             estado: "Pendente"
         });
         closeAssignModal();
-        alert("Entrega iniciada!");
-    } catch (err) { console.error("Erro ao atribuir:", err); }
+        alert("Entrega em curso!");
+    } catch (err) { console.error(err); }
 });
 
-// --- 6. MONITORIZAÇÃO DAS TABELAS ---
+// --- 6. MONITORIZAÇÃO ---
 function monitorizarSistema() {
     const q = query(collection(db, "entregas"), orderBy("timestamp", "desc"));
-    
     onSnapshot(q, (snapshot) => {
         const ordersBody = document.getElementById('ordersBody');
         const monitorBody = document.getElementById('monitorBody');
         if(!ordersBody || !monitorBody) return;
 
-        ordersBody.innerHTML = '';
-        monitorBody.innerHTML = '';
-
+        ordersBody.innerHTML = ''; monitorBody.innerHTML = '';
         let pendentes = 0, emRota = 0, concluidasHoje = 0;
         const hoje = new Date().toISOString().split('T')[0];
 
         snapshot.forEach((docSnap) => {
             const data = docSnap.data();
             const id = docSnap.id;
-            const listaItens = data.itens.map(i => `• ${i.quantidade} ${i.material}`).join('<br>');
+            const itensFormatados = data.itens ? data.itens.map(i => `• ${i.quantidade} ${i.material}`).join('<br>') : "Sem itens";
 
             if (data.estado === "Planeamento") {
                 pendentes++;
@@ -149,7 +143,7 @@ function monitorizarSistema() {
                     <tr>
                         <td>${data.dataAgendada}</td>
                         <td>${data.cliente}</td>
-                        <td>${listaItens}</td>
+                        <td>${itensFormatados}</td>
                         <td><button class="btn-primary" onclick="abrirAtribuicao('${id}')">Enviar p/ Entrega</button></td>
                     </tr>`;
             } else {
@@ -160,9 +154,9 @@ function monitorizarSistema() {
                     <tr>
                         <td>${data.cliente}</td>
                         <td>${data.condutor || '-'}<br><small>${data.veiculo || '-'}</small></td>
-                        <td>${listaItens}</td>
+                        <td>${itensFormatados}</td>
                         <td><span class="badge ${getBadgeClass(data.estado)}">${data.estado}</span></td>
-                        <td><button class="btn-small" onclick="verDetalhes('${id}')">Detalhes</button></td>
+                        <td><button class="btn-small" onclick="verDetalhes('${id}')">Ver</button></td>
                     </tr>`;
             }
         });
@@ -180,5 +174,4 @@ function getBadgeClass(estado) {
     return "";
 }
 
-// Iniciar sistema
 monitorizarSistema();
