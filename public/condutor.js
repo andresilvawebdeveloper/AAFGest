@@ -30,17 +30,15 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById('welcomeName').innerHTML = `Olá, <strong>${nomeCompleto.split(' ')[0]}</strong>`;
         });
 
-        // --- SISTEMA DE PRESENÇA (ONLINE) ---
         if (docId) {
             const userRef = doc(db, "team", docId);
             await updateDoc(userRef, { status: "online" });
-
-            // Define como offline quando fecha a aba ou sai da app
             window.addEventListener('beforeunload', () => {
                 updateDoc(userRef, { status: "offline" });
             });
         }
 
+        // Filtra entregas atribuídas a este condutor
         const qEntregas = query(collection(db, "entregas"), where("condutor", "==", nomeCompleto));
 
         onSnapshot(qEntregas, (snapshot) => {
@@ -63,6 +61,11 @@ onAuthStateChanged(auth, async (user) => {
                 const dataExibicao = en.dataAgendada.split('-').reverse().join('/');
                 const corEstado = en.estado === 'Pendente' ? '#3b82f6' : (en.estado === 'Em Rota' ? '#f97316' : '#22c55e');
 
+                // GERAR LISTA DE ITENS (NOVO)
+                const listaItensHTML = en.itens.map(item => 
+                    `<li style="margin-bottom: 4px;"><i class='bx bx-package'></i> ${item.material} (<strong>${item.quantidade}</strong>)</li>`
+                ).join('');
+
                 const card = document.createElement('div');
                 card.className = `delivery-card`;
                 card.style = `background: white; padding: 20px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border-left: 5px solid ${corEstado}; opacity: ${en.estado === 'Concluída' ? '0.7' : '1'}`;
@@ -71,7 +74,9 @@ onAuthStateChanged(auth, async (user) => {
                     <div class="delivery-info">
                         <span style="font-size: 0.75rem; font-weight: 800; color: ${corEstado};">${dataExibicao} ${en.estado === 'Em Rota' ? '• EM ROTA' : ''}</span>
                         <h4 style="margin: 5px 0; font-size: 1.1rem;">${en.cliente}</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 4px;"><i class='bx bx-package'></i> ${en.material} (${en.quantidade})</p>
+                        <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: var(--text-light); margin: 8px 0;">
+                            ${listaItensHTML}
+                        </ul>
                         <p style="font-size: 0.85rem; color: var(--text-light);"><i class='bx bx-car'></i> ${en.veiculo}</p>
                     </div>
                     <div class="delivery-actions" style="display: flex; gap: 10px;">
@@ -88,7 +93,7 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById('countConcluida').innerText = concluidas;
         });
     } else {
-        window.location.href = "index.html"; // Redireciona se não estiver logado
+        window.location.href = "index.html";
     }
 });
 
@@ -98,7 +103,9 @@ function renderBotaoAcao(id, en) {
                     <i class='bx bx-play' style="font-size: 1.5rem;"></i>
                 </button>`;
     } else if (en.estado === 'Em Rota') {
-        return `<button class="btn-icon" onclick="finalizarServico('${id}', '${en.material}', ${en.quantidade})" style="background: #22c55e; color: white; width: 45px; height: 45px; border-radius: 12px; border: none; cursor: pointer;">
+        // Agora passamos a string da lista de itens para a função (convertida para string JSON segura)
+        const itensJSON = JSON.stringify(en.itens).replace(/"/g, '&quot;');
+        return `<button class="btn-icon" onclick="finalizarServico('${id}', '${itensJSON}')" style="background: #22c55e; color: white; width: 45px; height: 45px; border-radius: 12px; border: none; cursor: pointer;">
                     <i class='bx bx-check' style="font-size: 1.5rem;"></i>
                 </button>`;
     } else {
@@ -117,28 +124,37 @@ window.iniciarRota = async (id) => {
     }
 };
 
-window.finalizarServico = async (id, materialNome, qtd) => {
-    if (confirm("Confirmas que este material foi entregue? O stock será atualizado automaticamente.")) {
+// --- FUNÇÃO PARA CONCLUIR E ABATER STOCK DE MÚLTIPLOS ITENS (ATUALIZADA) ---
+window.finalizarServico = async (id, itensRaw) => {
+    if (confirm("Confirmas a entrega de todos os materiais desta lista?")) {
         try {
+            const itens = JSON.parse(itensRaw.replace(/&quot;/g, '"'));
+
+            // 1. Atualizar Estado da Entrega
             await updateDoc(doc(db, "entregas", id), { 
                 estado: "Concluída",
                 horaChegada: new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
             });
 
-            const stockRef = collection(db, "stock");
-            const q = query(stockRef, where("name", "==", materialNome));
-            const querySnapshot = await getDocs(q);
+            // 2. Loop para abater cada material individualmente
+            for (const item of itens) {
+                const stockRef = collection(db, "stock");
+                const q = query(stockRef, where("name", "==", item.material));
+                const querySnapshot = await getDocs(q);
 
-            if (!querySnapshot.empty) {
-                querySnapshot.forEach(async (sDoc) => {
+                if (!querySnapshot.empty) {
+                    // Assume-se que o nome do material é único
+                    const sDoc = querySnapshot.docs[0];
                     await updateDoc(doc(db, "stock", sDoc.id), {
-                        quantity: increment(-qtd)
+                        quantity: increment(-item.quantidade)
                     });
-                });
+                }
             }
-            alert("Entrega concluída!");
+            
+            alert("Entrega e Stock atualizados com sucesso!");
         } catch (error) {
             console.error("Erro ao finalizar:", error);
+            alert("Erro ao processar a entrega.");
         }
     }
 };

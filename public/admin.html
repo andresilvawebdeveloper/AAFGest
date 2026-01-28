@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
- <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="AAFGest">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AAFGest">
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('AAFGest Online: ', reg.scope))
-        .catch(err => console.log('Erro ao registar App: ', err));
-    });
-  }
-</script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('AAFGest Online: ', reg.scope))
+            .catch(err => console.log('Erro ao registar App: ', err));
+        });
+      }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="module" src="guard.js"></script>
@@ -48,23 +48,23 @@
             <header class="admin-header">
                 <div>
                     <h1>Painel de Controlo</h1>
-                    <p>Bem-vindo, Administrador.</p>
+                    <p>Gestão de Encomendas e Logística.</p>
                 </div>
                 <button class="btn-primary" onclick="openEntregaModal()">+ Nova Encomenda</button>
             </header>
 
             <section class="admin-stats">
                 <div class="stat-card">
-                    <i class='bx bx-time-five icon-blue'></i>
+                    <i class='bx bx-list-check icon-blue'></i>
                     <div>
-                        <span class="stat-label">Pendentes</span>
+                        <span class="stat-label">Encomendas</span>
                         <span class="stat-value" id="statsPendentes">0</span>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <i class='bx bx-map-pin icon-orange'></i>
+                    <i class='bx bx-truck icon-orange'></i>
                     <div>
-                        <span class="stat-label">Em Rota</span>
+                        <span class="stat-label">Em Entrega</span>
                         <span class="stat-value" id="statsRota">0</span>
                     </div>
                 </div>
@@ -77,76 +77,111 @@
                 </div>
             </section>
 
+            <section class="admin-table-container" style="margin-bottom: 2rem;">
+                <div class="table-header">
+                    <h3><i class='bx bx-clipboard'></i> Encomendas em Planeamento</h3>
+                </div>
+                <table class="admin-table" id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Cliente / Obra</th>
+                            <th>Itens</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersBody"></tbody>
+                </table>
+            </section>
+
             <section class="admin-table-container">
                 <div class="table-header">
-                    <h3>Monitorização de Entregas</h3>
+                    <h3><i class='bx bx-map-alt'></i> Monitorização de Entregas (Live)</h3>
                     <span class="live-indicator"><span class="dot"></span> Live</span>
                 </div>
                 <table class="admin-table" id="monitorTable">
                     <thead>
                         <tr>
-                            <th>Data</th>
-                            <th>Cliente / Obra</th>
-                            <th>Condutor</th>
+                            <th>Cliente</th>
+                            <th>Condutor / Veículo</th>
+                            <th>Itens</th>
                             <th>Estado</th>
                             <th>Ação</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        </tbody>
+                    <tbody id="monitorBody"></tbody>
                 </table>
             </section>
         </main>
     </div>
 
     <div id="entregaModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h2>Criar Ordem de Entrega</h2>
+                <h2>Planear Nova Encomenda</h2>
                 <span class="close-modal" onclick="closeEntregaModal()">&times;</span>
             </div>
             <form id="entregaForm">
                 <div class="input-group">
                      <label>Cliente / Nome da Obra</label>
-                     <input type="text" id="entCliente" required placeholder="Ex: Construções Silva / Obra A2">
-               </div>
-               <div class="input-group">
-                    <label>Localização (Link Google Maps)</label>
-                    <input type="url" id="entLocalizacao" required placeholder="Cole aqui o link do Google Maps">
-               </div>
-                
+                     <input type="text" id="entCliente" required placeholder="Nome do cliente">
+                </div>
                 <div class="input-group">
-                    <label>Data de Entrega</label>
+                     <label>Localização (Link Google Maps)</label>
+                     <input type="url" id="entLocalizacao" required placeholder="Link para o GPS">
+                </div>
+                <div class="input-group">
+                    <label>Data Prevista</label>
                     <input type="date" id="entDataAgendada" required>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="input-group">
-                        <label>Condutor</label>
-                        <select id="entCondutor" required><option value="">Carregar...</option></select>
-                    </div>
-                    <div class="input-group">
-                        <label>Veículo</label>
-                        <select id="entVeiculo" required><option value="">Carregar...</option></select>
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
-                    <div class="input-group">
-                        <label>Material</label>
-                        <select id="entMaterial" required><option value="">Carregar...</option></select>
-                    </div>
-                    <div class="input-group">
-                        <label>Quantidade</label>
-                        <input type="number" id="entQty" required placeholder="0">
+
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border);">
+                
+                <div id="itensContainer">
+                    <div class="item-row" style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 10px; margin-bottom: 10px; align-items: end;">
+                        <div class="input-group">
+                            <label>Material</label>
+                            <select class="item-material" required><option value="">Carregar...</option></select>
+                        </div>
+                        <div class="input-group">
+                            <label>Qtd</label>
+                            <input type="number" class="item-qty" step="0.01" required placeholder="0.00">
+                        </div>
+                        <button type="button" class="btn-edit" onclick="removerLinha(this)" style="margin-bottom: 5px; color: red;"><i class='bx bx-trash'></i></button>
                     </div>
                 </div>
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 15px;">Confirmar Encomenda</button>
+
+                <button type="button" class="btn-secondary" onclick="adicionarLinhaItem()" style="width: 100%; margin-bottom: 20px; padding: 10px;">
+                    <i class='bx bx-plus'></i> Adicionar outro material
+                </button>
+                
+                <button type="submit" class="btn-primary" style="width: 100%;">Gravar Encomenda</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="assignModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Enviar para Entrega</h2>
+                <span class="close-modal" onclick="closeAssignModal()">&times;</span>
+            </div>
+            <form id="assignForm">
+                <input type="hidden" id="assignId">
+                <div class="input-group">
+                    <label>Selecionar Condutor</label>
+                    <select id="assignCondutor" required></select>
+                </div>
+                <div class="input-group">
+                    <label>Selecionar Veículo</label>
+                    <select id="assignVeiculo" required></select>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Iniciar Processo de Entrega</button>
             </form>
         </div>
     </div>
 
     <script type="module" src="logout.js"></script>
     <script type="module" src="admin.js"></script>
-    <script type="module" src="encomendas.js"></script>
-
 </body>
 </html>
